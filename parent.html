@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Max's French Tracker</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Young+Serif&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+  #app { max-width: 980px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .tile { background: var(--sheet); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 16px; display: grid; gap: 2px; }
+  .tile b { font-size: 1.8rem; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .tile span { color: var(--ink-soft); font-size: .9rem; }
+  .panel { background: var(--sheet); border-radius: 14px; box-shadow: var(--shadow); padding: 18px 20px; display: grid; gap: 10px; min-width: 0; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+  .wrap { display: grid; gap: 18px; padding-top: 8px; }
+  .pill { display: inline-block; border-radius: 99px; padding: 1px 10px; font-size: .8rem; font-weight: 700; }
+  .pill.ok { background: var(--good-bg); color: var(--good); }
+  .pill.behind { background: var(--bad-bg); color: var(--bad); }
+  .pill.next { background: var(--chip); color: var(--ink-soft); }
+  .typed { color: var(--bad); font-weight: 700; }
+  .exp { color: var(--good); font-weight: 700; }
+  .muted { color: var(--ink-soft); }
+  .ptable td, .ptable th { vertical-align: top; }
+  .bars { display: grid; gap: 6px; }
+  .barrow { display: grid; grid-template-columns: 90px 1fr 110px; gap: 10px; align-items: center; font-size: .92rem; }
+  .track { height: 12px; background: var(--chip); border-radius: 99px; overflow: hidden; }
+  .track span { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+</style>
+</head>
+<body>
+<div id="app"><main class="stage"><div class="card"><p>Loading…</p></div></main></div>
+<script src="config.js"></script>
+<script src="content.js"></script>
+<script src="store.js"></script>
+<script src="parent.js"></script>
+</body>
+</html>
