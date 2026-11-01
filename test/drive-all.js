@@ -3,7 +3,7 @@ const OUT = process.argv[2];
 (async () => {
   const b = await chromium.launch(); const page = await b.newPage({ viewport: { width: 1366, height: 768 } });
   const errs = []; page.on('pageerror', (e) => errs.push(e.message)); page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
-  await page.goto('http://localhost:8080/index.html?k=testkey&debug=1'); await page.waitForSelector('.today');
+  await page.goto('http://localhost:8080/index.html?debug=1'); await page.waitForSelector('.today');
   for (let c = 0; c < 10; c++) {
     const btn = (await page.$('[data-act="start"]')) || (await page.$('[data-act="ahead"]'));
     if (!btn) break; await btn.click();

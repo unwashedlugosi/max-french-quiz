@@ -1,16 +1,13 @@
-/* store.js — saves Max's progress to the Supabase database. No login and no browser storage:
- * the link carries a key (?k=… for Max, ?p=… for the parent tracker), and the database only
- * answers through three functions that check that key (see supabase/french-schema.sql).
+/* store.js — saves Max's progress to the Supabase database. No login, no key, no browser storage:
+ * the app and the parent tracker open from plain addresses, and the database answers only through
+ * three functions that always use Max's record (see supabase/plain-links.sql).
  */
 (function () {
   'use strict';
   const cfg = window.FR_CONFIG || {};
   const URL_ = String(cfg.supabaseUrl || '').replace(/\/+$/, '');
   const ANON = cfg.anonKey || '';
-  const params = new URLSearchParams(location.search);
-  const KEY = params.get('k') || '';
-  const PKEY = params.get('p') || '';
-  const BACKOFF = [2000, 5000, 15000, 30000];
+    const BACKOFF = [2000, 5000, 15000, 30000];
 
   async function rpc(fn, body, timeoutMs) {
     const ctl = new AbortController();
@@ -32,11 +29,11 @@
 
   function schedule(ms) { clearTimeout(timer); timer = setTimeout(flush, ms); }
   async function flush() {
-    if (inFlight || (!dirty && !events.length) || !KEY) return;
+    if (inFlight || (!dirty && !events.length)) return;
     inFlight = true; status('saving', 'Saving…');
     const batch = events.splice(0, 150); const snap = latest; dirty = false;
     try {
-      await rpc('fr_save', { p_key: KEY, p_state: snap, p_events: batch });
+      await rpc('fr_save_max', { p_state: snap, p_events: batch });
       fails = 0; status('saved', 'Saved');
     } catch (e) {
       events = batch.concat(events); dirty = true;
@@ -47,14 +44,13 @@
   }
 
   window.Store = {
-    key: KEY, parentKey: PKEY, configured: !!(URL_ && ANON),
+    configured: !!(URL_ && ANON),
     async load() {
-      if (!KEY) return { error: 'nokey' };
       if (!URL_ || !ANON) return { error: 'noconfig' };
       for (let i = 0; i < 3; i++) {
         try {
-          const r = await rpc('fr_load', { p_key: KEY });
-          if (r == null) return { error: 'badkey' };
+          const r = await rpc('fr_load_max', {});
+          if (r == null) return { error: 'offline' };
           return { state: r.state || {} };
         } catch (e) { await new Promise((ok) => setTimeout(ok, 1500 * (i + 1))); }
       }
@@ -65,9 +61,8 @@
     pending() { return dirty || events.length > 0 || inFlight; },
     onStatus(f) { listeners.push(f); },
     async parent() {
-      if (!PKEY) return { error: 'nokey' };
       if (!URL_ || !ANON) return { error: 'noconfig' };
-      try { const r = await rpc('fr_parent', { p_key: PKEY }); return r == null ? { error: 'badkey' } : r; }
+      try { const r = await rpc('fr_parent_max', {}); return r == null ? { error: 'offline' } : r; }
       catch (e) { return { error: 'offline' }; }
     },
   };

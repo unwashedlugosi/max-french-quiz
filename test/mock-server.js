@@ -1,6 +1,6 @@
 // Local test server: serves the site and fakes the three Supabase functions in memory.
 const http = require('http'), fs = require('fs'), path = require('path');
-const ROOT = path.join(__dirname, '..');
+const ROOT = process.env.ROOT || path.join(__dirname, '..');
 const db = { state: {}, events: [], updated_at: null };
 const SK = 'testkey', PK = 'parentkey';
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.mp3': 'audio/mpeg', '.json': 'application/json' };
@@ -10,9 +10,9 @@ http.createServer((req, res) => {
   if (u.pathname.startsWith('/rest/v1/rpc/')) {
     let body = ''; req.on('data', (c) => body += c); req.on('end', () => {
       const b = JSON.parse(body || '{}'), fn = u.pathname.split('/').pop(); let out = null;
-      if (fn === 'fr_load') out = b.p_key === SK ? { state: db.state, updated_at: db.updated_at } : null;
-      if (fn === 'fr_save') { if (b.p_key !== SK) { res.writeHead(400); return res.end('unknown key'); } db.state = b.p_state; db.updated_at = new Date().toISOString(); db.events.unshift(...(b.p_events || []).slice().reverse()); out = db.updated_at; }
-      if (fn === 'fr_parent') out = b.p_key === PK ? { state: db.state, updated_at: db.updated_at, events: db.events } : null;
+      if (fn === 'fr_load_max') out = { state: db.state, updated_at: db.updated_at };
+      if (fn === 'fr_save_max') { db.state = b.p_state; db.updated_at = new Date().toISOString(); db.events.unshift(...(b.p_events || []).slice().reverse()); out = db.updated_at; }
+      if (fn === 'fr_parent_max') out = { state: db.state, updated_at: db.updated_at, events: db.events };
       res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(out));
     }); return;
   }

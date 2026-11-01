@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 (async () => {
   const b = await chromium.launch(); const page = await b.newPage();
   const errs = []; page.on('pageerror', (e) => errs.push(e.message));
-  await page.goto('http://localhost:8080/index.html?k=testkey&debug=1'); await page.waitForSelector('.today');
+  await page.goto('http://localhost:8080/index.html?debug=1'); await page.waitForSelector('.today');
   const res = await page.evaluate(() => {
     const out = []; const seen = {};
     const A = window.FR_AUDIO, key = (s) => String(s).toLowerCase().replace(/[’‘]/g, "'").replace(/[?!.,;:«»—…"]/g, ' ').replace(/\s+/g, ' ').trim();

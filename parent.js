@@ -89,7 +89,7 @@
   async function refresh() {
     const d = await window.Store.parent();
     if (d.error) {
-      const msg = { nokey: 'This link is missing its parent key (?p=…).', badkey: 'This parent key doesn\'t match.', noconfig: 'The database isn\'t connected yet.', offline: 'Can\'t reach the database right now. Retrying in a minute.' }[d.error];
+      const msg = { noconfig: 'The database isn\'t connected yet.', offline: 'Can\'t reach the database right now. Retrying in a minute.' }[d.error];
       if (d.error !== 'offline' || !$app.querySelector('.wrap')) $app.innerHTML = '<main class="stage"><div class="card"><h2>Tracker unavailable</h2><p>' + esc(msg) + '</p></div></main>';
       return;
     }

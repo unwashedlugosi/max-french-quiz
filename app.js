@@ -670,8 +670,7 @@
   /* ---------------- start ---------------- */
   $app.innerHTML = '<main class="stage"><div class="card"><p>Loading your progress…</p></div></main>';
   window.Store.load().then((r) => {
-    const msg = { nokey: ['This link is missing its key', 'Open the app from the link your dad sent (it ends in ?k=…).'],
-      badkey: ['This link\'s key doesn\'t match', 'Ask your dad for the right link.'],
+    const msg = {
       noconfig: ['The database isn\'t connected yet', 'Your dad needs to finish setting it up.'],
       offline: ['Can\'t reach the database', 'Check the Wi-Fi, then reload the page.'] }[r.error];
     if (msg) { $app.innerHTML = '<main class="stage"><div class="card"><h2>' + msg[0] + '</h2><p>' + msg[1] + '</p><button class="btn" onclick="location.reload()">Try again</button></div></main>'; return; }
